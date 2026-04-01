@@ -7,21 +7,21 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background: #f0faf4; color: #1a1a1a; min-height: 100vh; }
-    header { background: #15803d; color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+    header { background: #15803d; color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     header h1 { font-size: 20px; font-weight: 600; }
-    .tabs { display: flex; gap: 4px; padding: 16px 24px 0; background: white; border-bottom: 2px solid #e5e7eb; }
+    .tabs { display: flex; gap: 4px; padding: 16px 24px 0; background: white; border-bottom: 2px solid #e5e7eb; flex-wrap: wrap; }
     .tab { padding: 10px 20px; cursor: pointer; border-radius: 6px 6px 0 0; font-size: 14px; border: none; background: #f3f4f6; color: #374151; }
     .tab.active { background: #15803d; color: white; }
-    .content { padding: 24px; max-width: 900px; margin: 0 auto; }
+    .content { padding: 24px; max-width: 960px; margin: 0 auto; }
     .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
     .card h2 { font-size: 16px; margin-bottom: 16px; color: #15803d; }
-    input, select { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; margin-bottom: 8px; }
+    input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; margin-bottom: 8px; }
     button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
-    .btn-green { background: #15803d; color: white; }
-    .btn-green:hover { background: #166534; }
+    .btn-green { background: #15803d; color: white; } .btn-green:hover { background: #166534; }
     .btn-red { background: #dc2626; color: white; }
     .btn-blue { background: #2563eb; color: white; }
     .btn-gray { background: #6b7280; color: white; }
+    .btn-orange { background: #ea580c; color: white; }
     .btn-sm { padding: 4px 10px; font-size: 12px; }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
     th { background: #f0faf4; padding: 10px; text-align: left; border-bottom: 2px solid #d1fae5; }
@@ -32,21 +32,22 @@
     .badge-blue { background: #dbeafe; color: #1e40af; }
     .badge-orange { background: #fed7aa; color: #9a3412; }
     .badge-gray { background: #f3f4f6; color: #374151; }
+    .badge-purple { background: #ede9fe; color: #5b21b6; }
     .flex { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
     .hidden { display: none !important; }
     .player-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
-    .modal { background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal { background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
     .modal h3 { margin-bottom: 16px; color: #15803d; }
     .set-row { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
     .set-row label { width: 50px; font-size: 13px; color: #6b7280; }
-    .set-row input { width: 70px; text-align: center; }
-    label.form-label { display: block; font-size: 13px; color: #374151; margin-bottom: 4px; margin-top: 8px; }
+    label.form-label { display: block; font-size: 13px; color: #374151; margin-bottom: 4px; margin-top: 8px; font-weight: 500; }
     .empty-state { text-align: center; padding: 40px; color: #9ca3af; }
     .bracket-round { display: flex; flex-direction: column; gap: 16px; }
     .bracket-match { background: white; border: 1px solid #d1fae5; border-radius: 8px; overflow: hidden; }
-    .bracket-player { padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+    .bracket-player { padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; gap: 8px; }
     .bracket-player.winner-bg { background: #d1fae5; font-weight: 600; }
     .bracket-player:first-child { border-bottom: 1px solid #e5e7eb; }
     .bracket-container { display: flex; gap: 24px; overflow-x: auto; padding-bottom: 16px; }
@@ -55,156 +56,208 @@
     .schedule-card { background: white; border-radius: 8px; padding: 14px; margin-bottom: 10px; border-left: 4px solid #15803d; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
     .schedule-card.pending { border-left-color: #f59e0b; }
     .schedule-card.postponed { border-left-color: #6b7280; }
+    .tournament-card { background: white; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
+    .tournament-card:hover { border-color: #15803d; }
+    .tournament-card.active-tournament { border-color: #15803d; background: #f0fdf4; }
+    #home-screen { padding: 24px; max-width: 700px; margin: 0 auto; }
+    .home-hero { text-align: center; padding: 40px 20px 24px; }
+    .home-hero h2 { font-size: 24px; color: #15803d; margin-bottom: 8px; }
+    .home-hero p { color: #6b7280; font-size: 15px; }
+    .type-btn { padding: 14px 20px; border: 2px solid #d1d5db; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; }
+    .type-btn:hover, .type-btn.selected { border-color: #15803d; background: #f0fdf4; color: #15803d; font-weight: 600; }
+    .format-btn { padding: 10px 14px; border: 2px solid #d1d5db; border-radius: 8px; background: white; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .format-btn:hover, .format-btn.selected { border-color: #15803d; background: #f0fdf4; color: #15803d; font-weight: 600; }
+    .lineup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+    .lineup-box { border: 1px solid #d1fae5; border-radius: 8px; padding: 12px; background: #f9fafb; }
+    .lineup-box h4 { font-size: 13px; color: #15803d; margin-bottom: 8px; }
+    .sub-match-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; gap: 8px; }
+    .sub-match-row:last-child { border-bottom: none; }
+    .lock-banner { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 10px 16px; font-size: 13px; color: #92400e; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   </style>
 </head>
 <body>
 
 <header>
   <span style="font-size:24px">🏓</span>
-  <h1>TT Match Manager</h1>
-  <span style="margin-left:auto;font-size:13px;opacity:0.8">Sports Fest</span>
+  <h1 id="header-title">TT Match Manager</h1>
+  <div id="header-tournament-info" style="margin-left:auto;display:flex;gap:8px;align-items:center"></div>
 </header>
 
-<div class="tabs">
-  <button class="tab active" onclick="showTab('teams', this)">Teams</button>
-  <button class="tab" onclick="showTab('groups', this)">Groups</button>
-  <button class="tab" onclick="showTab('matches', this)">Matches</button>
-  <button class="tab" onclick="showTab('knockout', this)">Knockout</button>
-  <button class="tab" onclick="showTab('schedule', this)">Schedule</button>
+<!-- HOME SCREEN -->
+<div id="home-screen">
+  <div class="home-hero">
+    <h2>🏓 TT Match Manager</h2>
+    <p>Create or select a tournament to get started</p>
+  </div>
+  <div class="card">
+    <h2>➕ Create New Tournament</h2>
+    <label class="form-label">Tournament Name</label>
+    <input id="t-name" placeholder="e.g. Sports Fest 2025" />
+    <label class="form-label">Type</label>
+    <div class="flex" style="margin-bottom:8px">
+      <button class="type-btn selected" id="btn-type-team" onclick="selectType('team')">🏫 Team Event<br><small style="font-weight:400;color:#6b7280">Teams with 4–6 players</small></button>
+      <button class="type-btn" id="btn-type-singles" onclick="selectType('singles')">👤 Singles<br><small style="font-weight:400;color:#6b7280">Individual players</small></button>
+    </div>
+    <label class="form-label">Format</label>
+    <div class="flex" style="margin-bottom:12px">
+      <button class="format-btn selected" id="btn-fmt-league" onclick="selectFormat('league')">📋 League Only</button>
+      <button class="format-btn" id="btn-fmt-knockout" onclick="selectFormat('knockout')">🏆 Knockout Only</button>
+      <button class="format-btn" id="btn-fmt-both" onclick="selectFormat('league_knockout')">📋→🏆 League + Knockout</button>
+    </div>
+    <button class="btn-green" onclick="createTournament()" style="width:100%;padding:12px;font-size:15px">Create Tournament</button>
+  </div>
+  <div class="card">
+    <h2>📂 Existing Tournaments</h2>
+    <div id="tournament-list"><div class="empty-state">No tournaments yet.</div></div>
+  </div>
 </div>
 
-<div class="content">
-
-  <!-- TEAMS TAB -->
-  <div id="tab-teams">
-    <div class="card">
-      <h2>➕ Add Team</h2>
-      <label class="form-label">Team / College Name</label>
-      <input id="team-name" placeholder="e.g. NIT Goa" />
-      <div id="players-container">
-        <label class="form-label">Players (min 4, max 6)</label>
-        <div class="player-row"><input placeholder="Player 1" class="player-input" /><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button></div>
-        <div class="player-row"><input placeholder="Player 2" class="player-input" /><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button></div>
-        <div class="player-row"><input placeholder="Player 3" class="player-input" /><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button></div>
-        <div class="player-row"><input placeholder="Player 4" class="player-input" /><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button></div>
-      </div>
-      <div class="flex" style="margin-top:8px">
-        <button class="btn-gray" onclick="addPlayerField()">+ Add Player</button>
-        <button class="btn-green" onclick="addTeam()">Save Team</button>
-      </div>
-    </div>
-    <div class="card">
-      <h2>🏫 Registered Teams</h2>
-      <div id="teams-list"><div class="empty-state">No teams yet. Add one above!</div></div>
-    </div>
+<!-- MAIN APP -->
+<div id="main-app" class="hidden">
+  <div class="tabs">
+    <button class="tab active" id="tab-btn-players" onclick="showTab('players',this)">Teams</button>
+    <button class="tab" id="tab-btn-groups" onclick="showTab('groups',this)">Groups</button>
+    <button class="tab" id="tab-btn-matches" onclick="showTab('matches',this)">Matches</button>
+    <button class="tab" id="tab-btn-knockout" onclick="showTab('knockout',this)">Knockout</button>
+    <button class="tab" id="tab-btn-schedule" onclick="showTab('schedule',this)">Schedule</button>
+    <button class="tab" style="margin-left:auto;background:#fef3c7;color:#92400e" onclick="goHome()">⬅ All Tournaments</button>
   </div>
+  <div class="content">
 
-  <!-- GROUPS TAB -->
-  <div id="tab-groups" class="hidden">
-    <div class="card">
-      <h2>📋 Create Group</h2>
-      <div class="grid2">
-        <div>
-          <label class="form-label">Group Name</label>
-          <input id="group-name" placeholder="e.g. Group A" />
+    <!-- PLAYERS/TEAMS TAB -->
+    <div id="tab-players">
+      <div id="team-section">
+        <div class="card">
+          <h2>➕ Add Team</h2>
+          <label class="form-label">Team / College Name</label>
+          <input id="team-name" placeholder="e.g. NIT Goa" />
+          <div id="players-container">
+            <label class="form-label">Players (min 4, max 6)</label>
+            <div class="player-row"><input placeholder="Player 1" class="player-input"/><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button></div>
+            <div class="player-row"><input placeholder="Player 2" class="player-input"/><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button></div>
+            <div class="player-row"><input placeholder="Player 3" class="player-input"/><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button></div>
+            <div class="player-row"><input placeholder="Player 4" class="player-input"/><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button></div>
+          </div>
+          <div class="flex" style="margin-top:8px">
+            <button class="btn-gray" onclick="addPlayerField()">+ Add Player</button>
+            <button class="btn-green" onclick="addTeam()">Save Team</button>
+          </div>
         </div>
-        <div>
-          <label class="form-label">Teams that qualify to knockout</label>
-          <input id="group-qualify" type="number" min="1" max="6" value="2" />
+        <div class="card">
+          <h2>🏫 Registered Teams</h2>
+          <div id="teams-list"><div class="empty-state">No teams yet.</div></div>
         </div>
       </div>
-      <label class="form-label">Select teams for this group (hold Ctrl to pick multiple)</label>
-      <select id="group-team-select" multiple style="height:120px"></select>
-      <br/><button class="btn-green" style="margin-top:8px" onclick="createGroup()">Create Group</button>
+      <div id="singles-section" class="hidden">
+        <div class="card">
+          <h2>➕ Add Player</h2>
+          <div class="grid3">
+            <div><label class="form-label">Player Name</label><input id="single-name" placeholder="e.g. Ammar" /></div>
+            <div><label class="form-label">College / Tag</label><input id="single-college" placeholder="e.g. NIT Goa" /></div>
+            <div><label class="form-label">Seed (optional)</label><input id="single-seed" type="number" placeholder="1" min="1" /></div>
+          </div>
+          <button class="btn-green" onclick="addSinglePlayer()">Add Player</button>
+        </div>
+        <div class="card">
+          <h2>👤 Registered Players</h2>
+          <div id="singles-list"><div class="empty-state">No players yet.</div></div>
+        </div>
+      </div>
     </div>
-    <div id="groups-list"></div>
+
+    <!-- GROUPS TAB -->
+    <div id="tab-groups" class="hidden">
+      <div class="card">
+        <h2>📋 Create Group</h2>
+        <div class="grid2">
+          <div><label class="form-label">Group Name</label><input id="group-name" placeholder="e.g. Group A" /></div>
+          <div><label class="form-label">Teams that qualify</label><input id="group-qualify" type="number" min="1" max="10" value="2" /></div>
+        </div>
+        <label class="form-label">Select participants (hold Ctrl for multiple)</label>
+        <select id="group-team-select" multiple style="height:120px"></select>
+        <div class="flex" style="margin-top:8px">
+          <button class="btn-green" onclick="createGroup()">Create Group</button>
+          <button class="btn-blue" onclick="autoGenerateRoundRobin()">⚡ Auto Round Robin</button>
+        </div>
+      </div>
+      <div id="groups-list"></div>
+    </div>
+
+    <!-- MATCHES TAB -->
+    <div id="tab-matches" class="hidden">
+      <div class="card">
+        <h2>➕ Schedule Match</h2>
+        <div class="grid2">
+          <div><label class="form-label" id="match-p1-label">Team 1</label><select id="match-team1"></select></div>
+          <div><label class="form-label" id="match-p2-label">Team 2</label><select id="match-team2"></select></div>
+        </div>
+        <div class="grid2">
+          <div>
+            <label class="form-label">Match Format</label>
+            <select id="match-format">
+              <option value="3">Best of 3</option>
+              <option value="5" selected>Best of 5</option>
+              <option value="7">Best of 7</option>
+            </select>
+          </div>
+          <div><label class="form-label">Group (optional)</label><select id="match-group"><option value="">— None —</option></select></div>
+        </div>
+        <div class="grid2">
+          <div><label class="form-label">Date</label><input type="date" id="match-date" /></div>
+          <div><label class="form-label">Time (e.g. 4:30 PM)</label><input id="match-time" placeholder="4:30 PM" /></div>
+        </div>
+        <label class="form-label">Table Number</label>
+        <select id="match-table">
+          <option value="1">Table 1</option><option value="2">Table 2</option>
+          <option value="3">Table 3</option><option value="4">Table 4</option>
+        </select>
+        <button class="btn-green" style="margin-top:12px" onclick="scheduleMatch()">Schedule Match</button>
+      </div>
+      <div class="card">
+        <h2>📅 All Matches</h2>
+        <div id="matches-list"><div class="empty-state">No matches yet.</div></div>
+      </div>
+    </div>
+
+    <!-- KNOCKOUT TAB -->
+    <div id="tab-knockout" class="hidden">
+      <div class="card">
+        <h2>🏆 Knockout Bracket</h2>
+        <div class="flex" style="margin-bottom:8px">
+          <button class="btn-green" onclick="generateKnockout()">Generate from Group Winners</button>
+          <button class="btn-blue" onclick="showManualKnockout()">Manual Setup</button>
+          <button class="btn-gray" id="lock-btn" onclick="toggleKnockoutLock()">🔒 Lock Bracket</button>
+        </div>
+        <div id="lock-banner" class="lock-banner hidden">
+          🔒 Bracket is locked. Completed matches are preserved.
+          <button class="btn-gray btn-sm" onclick="toggleKnockoutLock()">Unlock</button>
+        </div>
+      </div>
+      <div id="knockout-manual" class="card hidden">
+        <h2>Manual Bracket Setup</h2>
+        <label class="form-label">Total slots (4, 8, 16…)</label>
+        <input id="ko-slots" type="number" value="8" min="2" max="64" oninput="buildKoInputs(parseInt(this.value)||8)" />
+        <div id="ko-player-inputs"></div>
+        <button class="btn-green" style="margin-top:8px" onclick="buildManualBracket()">Build Bracket</button>
+      </div>
+      <div id="knockout-bracket"></div>
+    </div>
+
+    <!-- SCHEDULE TAB -->
+    <div id="tab-schedule" class="hidden">
+      <div class="card">
+        <h2>📋 Schedule Overview</h2>
+        <div class="flex" style="margin-bottom:12px">
+          <span class="badge badge-green">● Upcoming</span>
+          <span class="badge badge-orange">● Pending</span>
+          <span class="badge badge-gray">● Postponed</span>
+          <span class="badge badge-blue">● Completed</span>
+        </div>
+        <div id="schedule-list"><div class="empty-state">No matches yet.</div></div>
+      </div>
+    </div>
+
   </div>
-
-  <!-- MATCHES TAB -->
-  <div id="tab-matches" class="hidden">
-    <div class="card">
-      <h2>➕ Schedule Match</h2>
-      <div class="grid2">
-        <div>
-          <label class="form-label">Team 1</label>
-          <select id="match-team1"></select>
-        </div>
-        <div>
-          <label class="form-label">Team 2</label>
-          <select id="match-team2"></select>
-        </div>
-      </div>
-      <div class="grid2">
-        <div>
-          <label class="form-label">Match Format</label>
-          <select id="match-format">
-            <option value="3">Best of 3</option>
-            <option value="5" selected>Best of 5</option>
-            <option value="7">Best of 7</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Group (optional)</label>
-          <select id="match-group"><option value="">— None —</option></select>
-        </div>
-      </div>
-      <div class="grid2">
-        <div>
-          <label class="form-label">Date</label>
-          <input type="date" id="match-date" />
-        </div>
-        <div>
-          <label class="form-label">Time (e.g. 4:30 PM)</label>
-          <input id="match-time" placeholder="4:30 PM" />
-        </div>
-      </div>
-      <label class="form-label">Table Number</label>
-      <select id="match-table">
-        <option value="1">Table 1</option>
-        <option value="2">Table 2</option>
-        <option value="3">Table 3</option>
-        <option value="4">Table 4</option>
-      </select>
-      <button class="btn-green" style="margin-top:12px" onclick="scheduleMatch()">Schedule Match</button>
-    </div>
-    <div class="card">
-      <h2>📅 All Matches</h2>
-      <div id="matches-list"><div class="empty-state">No matches scheduled yet.</div></div>
-    </div>
-  </div>
-
-  <!-- KNOCKOUT TAB -->
-  <div id="tab-knockout" class="hidden">
-    <div class="card">
-      <h2>🏆 Knockout Bracket</h2>
-      <div class="flex">
-        <button class="btn-green" onclick="generateKnockout()">Generate from Group Winners</button>
-        <button class="btn-blue" onclick="showManualKnockout()">Manual Setup</button>
-      </div>
-    </div>
-    <div id="knockout-manual" class="card hidden">
-      <h2>Manual Bracket Setup</h2>
-      <label class="form-label">Number of slots (4, 8, 16…)</label>
-      <input id="ko-slots" type="number" value="8" min="2" max="64" oninput="buildKoInputs(parseInt(this.value)||8)" />
-      <div id="ko-player-inputs"></div>
-      <button class="btn-green" style="margin-top:8px" onclick="buildManualBracket()">Build Bracket</button>
-    </div>
-    <div id="knockout-bracket"></div>
-  </div>
-
-  <!-- SCHEDULE TAB -->
-  <div id="tab-schedule" class="hidden">
-    <div class="card">
-      <h2>📋 Match Schedule Overview</h2>
-      <div class="flex" style="margin-bottom:12px">
-        <span class="badge badge-green">● Upcoming</span>
-        <span class="badge badge-orange">● Pending</span>
-        <span class="badge badge-gray">● Postponed</span>
-      </div>
-      <div id="schedule-list"><div class="empty-state">No matches yet. Go to Matches tab to add some!</div></div>
-    </div>
-  </div>
-
 </div>
 
 <!-- SCORE MODAL -->
@@ -214,7 +267,19 @@
     <div id="modal-body"></div>
     <div class="flex" style="margin-top:16px;justify-content:flex-end">
       <button class="btn-gray" onclick="closeModal()">Cancel</button>
-      <button class="btn-green" onclick="saveScore()">Save Result</button>
+      <button class="btn-green" onclick="saveScore()">Save & Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- LINEUP MODAL -->
+<div id="lineup-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3 id="lineup-modal-title">Set Lineup</h3>
+    <div id="lineup-modal-body"></div>
+    <div class="flex" style="margin-top:16px;justify-content:flex-end">
+      <button class="btn-gray" onclick="closeLineupModal()">Cancel</button>
+      <button class="btn-green" onclick="saveLineup()">Confirm Lineup → Score</button>
     </div>
   </div>
 </div>
@@ -233,35 +298,197 @@
   </div>
 </div>
 
-<script>
-let state = JSON.parse(localStorage.getItem('ttstate') || 'null') || {
-  teams: [], groups: [], matches: [], knockout: [], nextId: 1
-};
-let editTeamId = null;
-let activeMatchId = null;
+<!-- EDIT PLAYER MODAL -->
+<div id="edit-player-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3>Edit Player</h3>
+    <label class="form-label">Name</label><input id="edit-player-name" />
+    <label class="form-label">College</label><input id="edit-player-college" />
+    <label class="form-label">Seed</label><input id="edit-player-seed" type="number" />
+    <div class="flex" style="margin-top:12px;justify-content:flex-end">
+      <button class="btn-gray" onclick="closeEditPlayer()">Cancel</button>
+      <button class="btn-green" onclick="saveEditPlayer()">Save</button>
+    </div>
+  </div>
+</div>
 
-function save() { localStorage.setItem('ttstate', JSON.stringify(state)); }
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let state = JSON.parse(localStorage.getItem('ttstate_v2') || 'null') || {
+  tournaments: [], activeTournamentId: null, nextId: 1
+};
+
+// Migrate old data
+(function migrate() {
+  const old = localStorage.getItem('ttstate');
+  if (old && !state.tournaments.length) {
+    try {
+      const o = JSON.parse(old);
+      if (o.teams || o.matches) {
+        state.tournaments.push({
+          id: 1, name: 'Imported Tournament', type: 'team', format: 'league_knockout',
+          teams: o.teams||[], groups: o.groups||[], matches: o.matches||[],
+          knockout: o.knockout||[], settings: { slots:8, lockKnockout:false }
+        });
+        state.nextId = Math.max(state.nextId, o.nextId||2, 100);
+        save();
+      }
+    } catch(e) {}
+  }
+})();
+
+function save() { localStorage.setItem('ttstate_v2', JSON.stringify(state)); }
 function uid() { return state.nextId++; }
 
-function showTab(name, btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.add('hidden'));
-  document.getElementById('tab-' + name).classList.remove('hidden');
-  btn.classList.add('active');
-  if (name === 'groups') { refreshGroupTeamSelect(); renderGroups(); }
-  if (name === 'matches') refreshMatchDropdowns();
-  if (name === 'schedule') renderSchedule();
-  if (name === 'knockout') renderKnockout();
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function getTournament() { return state.tournaments.find(t => t.id === state.activeTournamentId) || null; }
+function getTeams()    { return getTournament()?.teams   || []; }
+function getGroups()   { return getTournament()?.groups  || []; }
+function getMatches()  { return getTournament()?.matches || []; }
+function isTeamMode()  { return getTournament()?.type === 'team'; }
+function getFormat()   { return getTournament()?.format || 'league_knockout'; }
+
+function participantName(id) {
+  const t = getTournament(); if (!t) return '?';
+  const p = t.teams.find(x => x.id === id);
+  if (!p) return '?';
+  if (t.type === 'team') return p.name;
+  return p.college ? `${p.name} (${p.college})` : p.name;
 }
 
-// TEAMS
+// ─── TYPE / FORMAT SELECTION ──────────────────────────────────────────────────
+let selectedType = 'team', selectedFormat = 'league';
+
+function selectType(t) {
+  selectedType = t;
+  document.getElementById('btn-type-team').classList.toggle('selected', t === 'team');
+  document.getElementById('btn-type-singles').classList.toggle('selected', t === 'singles');
+}
+
+// FIX 1: format button IDs now match exactly what's in the HTML
+function selectFormat(f) {
+  selectedFormat = f;
+  document.getElementById('btn-fmt-league').classList.remove('selected');
+  document.getElementById('btn-fmt-knockout').classList.remove('selected');
+  document.getElementById('btn-fmt-both').classList.remove('selected');
+  if (f === 'league')          document.getElementById('btn-fmt-league').classList.add('selected');
+  if (f === 'knockout')        document.getElementById('btn-fmt-knockout').classList.add('selected');
+  if (f === 'league_knockout') document.getElementById('btn-fmt-both').classList.add('selected');
+}
+
+// ─── HOME ─────────────────────────────────────────────────────────────────────
+function renderTournamentList() {
+  const el = document.getElementById('tournament-list');
+  if (!state.tournaments.length) { el.innerHTML = '<div class="empty-state">No tournaments yet. Create one above!</div>'; return; }
+  el.innerHTML = state.tournaments.map(t => `
+    <div class="tournament-card ${t.id===state.activeTournamentId?'active-tournament':''}" onclick="openTournament(${t.id})">
+      <div>
+        <strong>${t.name}</strong>
+        <div style="font-size:12px;color:#6b7280;margin-top:4px">
+          <span class="badge badge-${t.type==='team'?'blue':'purple'}">${t.type==='team'?'Team':'Singles'}</span>
+          <span class="badge badge-gray" style="margin-left:4px">${{league:'League',knockout:'Knockout',league_knockout:'League+KO'}[t.format]||t.format}</span>
+          <span style="margin-left:8px">${t.teams?.length||0} ${t.type==='team'?'teams':'players'}</span>
+        </div>
+      </div>
+      <div class="flex" onclick="event.stopPropagation()">
+        <button class="btn-green btn-sm" onclick="openTournament(${t.id})">Open</button>
+        <button class="btn-red btn-sm" onclick="deleteTournament(${t.id})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function createTournament() {
+  const name = document.getElementById('t-name').value.trim();
+  if (!name) { alert('Please enter a tournament name.'); return; }
+  const t = { id: uid(), name, type: selectedType, format: selectedFormat,
+    teams: [], groups: [], matches: [], knockout: [],
+    settings: { slots: 8, lockKnockout: false } };
+  state.tournaments.push(t);
+  save();
+  document.getElementById('t-name').value = '';
+  renderTournamentList();
+  openTournament(t.id);
+}
+
+function deleteTournament(id) {
+  if (!confirm('Delete this tournament and all its data?')) return;
+  state.tournaments = state.tournaments.filter(t => t.id !== id);
+  if (state.activeTournamentId === id) { state.activeTournamentId = null; }
+  save(); renderTournamentList();
+}
+
+function openTournament(id) {
+  state.activeTournamentId = id; save();
+  const t = getTournament();
+  document.getElementById('home-screen').classList.add('hidden');
+  document.getElementById('main-app').classList.remove('hidden');
+  document.getElementById('header-title').textContent = t.name;
+  document.getElementById('header-tournament-info').innerHTML =
+    `<span class="badge badge-${t.type==='team'?'blue':'purple'}">${t.type==='team'?'Team':'Singles'}</span>
+     <span class="badge badge-gray">${{league:'League',knockout:'Knockout',league_knockout:'League+KO'}[t.format]||t.format}</span>`;
+  applyFormatTabs();
+  showTab('players', document.getElementById('tab-btn-players'));
+}
+
+function goHome() {
+  document.getElementById('main-app').classList.add('hidden');
+  document.getElementById('home-screen').classList.remove('hidden');
+  document.getElementById('header-title').textContent = 'TT Match Manager';
+  document.getElementById('header-tournament-info').innerHTML = '';
+  renderTournamentList();
+}
+
+// FIX 2: applyFormatTabs — all tabs start visible, then hide based on format
+function applyFormatTabs() {
+  const fmt = getFormat();
+  const showGroups = fmt === 'league' || fmt === 'league_knockout';
+  const showKO     = fmt === 'knockout' || fmt === 'league_knockout';
+  document.getElementById('tab-btn-groups').classList.toggle('hidden', !showGroups);
+  document.getElementById('tab-btn-matches').classList.remove('hidden');
+  document.getElementById('tab-btn-knockout').classList.toggle('hidden', !showKO);
+  document.getElementById('tab-btn-schedule').classList.remove('hidden');
+  // team vs singles sections
+  document.getElementById('team-section').classList.toggle('hidden', !isTeamMode());
+  document.getElementById('singles-section').classList.toggle('hidden', isTeamMode());
+  // label updates
+  document.getElementById('tab-btn-players').textContent = isTeamMode() ? 'Teams' : 'Players';
+  document.getElementById('match-p1-label').textContent = isTeamMode() ? 'Team 1' : 'Player 1';
+  document.getElementById('match-p2-label').textContent = isTeamMode() ? 'Team 2' : 'Player 2';
+}
+
+// FIX 3: showTab — simple, explicit hide/show with no fragile selectors
+const ALL_CONTENT_TABS = ['tab-players','tab-groups','tab-matches','tab-knockout','tab-schedule'];
+
+function showTab(name, btn) {
+  // hide all content panels
+  ALL_CONTENT_TABS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+  // deactivate all tab buttons
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  // show target panel
+  const target = document.getElementById('tab-' + name);
+  if (target) target.classList.remove('hidden');
+  if (btn) btn.classList.add('active');
+  // refresh data for that tab
+  if (name === 'groups')   { refreshGroupTeamSelect(); renderGroups(); }
+  if (name === 'matches')  { refreshMatchDropdowns(); }
+  if (name === 'schedule') { renderSchedule(); }
+  if (name === 'knockout') { renderKnockout(); }
+  if (name === 'players')  { renderTeams(); renderSinglesList(); }
+}
+
+// ─── TEAMS ────────────────────────────────────────────────────────────────────
+let editTeamId = null;
+
 function addPlayerField() {
   const c = document.getElementById('players-container');
-  const inputs = c.querySelectorAll('.player-input');
-  if (inputs.length >= 6) { alert('Maximum 6 players per team.'); return; }
+  const count = c.querySelectorAll('.player-input').length;
+  if (count >= 6) { alert('Maximum 6 players per team.'); return; }
   const row = document.createElement('div');
   row.className = 'player-row';
-  row.innerHTML = `<input placeholder="Player ${inputs.length+1}" class="player-input"/><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button>`;
+  row.innerHTML = `<input placeholder="Player ${count+1}" class="player-input"/><button class="btn-gray btn-sm" onclick="removePlayerField(this)">✕</button>`;
   c.appendChild(row);
 }
 
@@ -272,11 +499,12 @@ function removePlayerField(btn) {
 }
 
 function addTeam() {
+  const t = getTournament(); if (!t) return;
   const name = document.getElementById('team-name').value.trim();
-  if (!name) { alert('Please enter a team name.'); return; }
+  if (!name) { alert('Enter team name.'); return; }
   const players = [...document.querySelectorAll('.player-input')].map(i => i.value.trim()).filter(Boolean);
-  if (players.length < 4) { alert('Please add at least 4 players.'); return; }
-  state.teams.push({ id: uid(), name, players });
+  if (players.length < 4) { alert('At least 4 players required.'); return; }
+  t.teams.push({ id: uid(), name, players });
   save();
   document.getElementById('team-name').value = '';
   document.querySelectorAll('.player-input').forEach(i => i.value = '');
@@ -284,13 +512,15 @@ function addTeam() {
 }
 
 function renderTeams() {
-  const el = document.getElementById('teams-list');
-  if (!state.teams.length) { el.innerHTML = '<div class="empty-state">No teams yet. Add one above!</div>'; return; }
-  el.innerHTML = state.teams.map(t => `
+  const el = document.getElementById('teams-list'); if (!el) return;
+  const teams = getTeams();
+  if (!isTeamMode()) return; // don't render in singles mode
+  if (!teams.length) { el.innerHTML = '<div class="empty-state">No teams yet.</div>'; return; }
+  el.innerHTML = teams.map(t => `
     <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:12px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:8px;background:#f9fafb">
       <div>
         <strong>${t.name}</strong>
-        <div style="margin-top:6px;font-size:13px;color:#6b7280">${t.players.map(p => `<span class="badge badge-green" style="margin:2px">${p}</span>`).join('')}</div>
+        <div style="margin-top:6px;font-size:13px">${(t.players||[]).map(p => `<span class="badge badge-green" style="margin:2px">${p}</span>`).join('')}</div>
       </div>
       <div class="flex">
         <button class="btn-blue btn-sm" onclick="openEditTeam(${t.id})">Edit</button>
@@ -300,133 +530,216 @@ function renderTeams() {
 }
 
 function deleteTeam(id) {
-  if (!confirm('Delete this team?')) return;
-  state.teams = state.teams.filter(t => t.id !== id);
+  const t = getTournament(); if (!t) return;
+  if (!confirm('Delete team?')) return;
+  t.teams = t.teams.filter(x => x.id !== id);
   save(); renderTeams();
 }
 
 function openEditTeam(id) {
-  const t = state.teams.find(x => x.id === id);
+  const team = getTeams().find(x => x.id === id); if (!team) return;
   editTeamId = id;
-  document.getElementById('edit-team-name').value = t.name;
+  document.getElementById('edit-team-name').value = team.name;
   const c = document.getElementById('edit-players-container');
-  c.innerHTML = '<label class="form-label">Players</label>' + t.players.map((p,i) => `
-    <div class="player-row"><input class="edit-player-input" value="${p}" placeholder="Player ${i+1}"/></div>`).join('');
+  c.innerHTML = '<label class="form-label">Players</label>' +
+    (team.players||[]).map((p,i) => `<div class="player-row"><input class="edit-player-input" value="${p}" placeholder="Player ${i+1}"/></div>`).join('');
   document.getElementById('edit-team-modal').classList.remove('hidden');
 }
 
 function saveEditTeam() {
-  const t = state.teams.find(x => x.id === editTeamId);
-  const newName = document.getElementById('edit-team-name').value.trim();
-  if (!newName) { alert('Team name cannot be empty.'); return; }
-  t.name = newName;
+  const t = getTournament(); if (!t) return;
+  const team = t.teams.find(x => x.id === editTeamId); if (!team) return;
+  const name = document.getElementById('edit-team-name').value.trim();
+  if (!name) { alert('Name cannot be empty.'); return; }
   const players = [...document.querySelectorAll('.edit-player-input')].map(i => i.value.trim()).filter(Boolean);
   if (players.length < 4) { alert('Minimum 4 players.'); return; }
-  t.players = players;
+  team.name = name; team.players = players;
   save(); closeEditTeam(); renderTeams();
 }
 
-function closeEditTeam() {
-  document.getElementById('edit-team-modal').classList.add('hidden');
-  editTeamId = null;
+function closeEditTeam() { document.getElementById('edit-team-modal').classList.add('hidden'); editTeamId = null; }
+
+// ─── SINGLES ─────────────────────────────────────────────────────────────────
+let editPlayerId = null;
+
+function addSinglePlayer() {
+  const t = getTournament(); if (!t) return;
+  const name = document.getElementById('single-name').value.trim();
+  if (!name) { alert('Enter player name.'); return; }
+  const college = document.getElementById('single-college').value.trim();
+  const seed = parseInt(document.getElementById('single-seed').value) || null;
+  t.teams.push({ id: uid(), name, college, seed });
+  save();
+  document.getElementById('single-name').value = '';
+  document.getElementById('single-college').value = '';
+  document.getElementById('single-seed').value = '';
+  renderSinglesList();
 }
 
-// GROUPS
+// FIX 4: renderSinglesList guards against being called in team mode
+function renderSinglesList() {
+  const el = document.getElementById('singles-list'); if (!el) return;
+  if (isTeamMode()) return;
+  const players = getTeams();
+  if (!players.length) { el.innerHTML = '<div class="empty-state">No players yet.</div>'; return; }
+  const sorted = [...players].sort((a,b) => (a.seed||999) - (b.seed||999));
+  el.innerHTML = `<table><thead><tr><th>Seed</th><th>Name</th><th>College</th><th>Actions</th></tr></thead><tbody>
+    ${sorted.map(p => `<tr>
+      <td>${p.seed ? `<span class="badge badge-orange">#${p.seed}</span>` : '—'}</td>
+      <td><strong>${p.name}</strong></td>
+      <td>${p.college||'—'}</td>
+      <td><div class="flex">
+        <button class="btn-blue btn-sm" onclick="openEditPlayer(${p.id})">Edit</button>
+        <button class="btn-red btn-sm" onclick="deleteSinglePlayer(${p.id})">Delete</button>
+      </div></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function deleteSinglePlayer(id) {
+  const t = getTournament(); if (!t) return;
+  if (!confirm('Delete player?')) return;
+  t.teams = t.teams.filter(x => x.id !== id);
+  save(); renderSinglesList();
+}
+
+function openEditPlayer(id) {
+  const p = getTeams().find(x => x.id === id); if (!p) return;
+  editPlayerId = id;
+  document.getElementById('edit-player-name').value = p.name;
+  document.getElementById('edit-player-college').value = p.college||'';
+  document.getElementById('edit-player-seed').value = p.seed||'';
+  document.getElementById('edit-player-modal').classList.remove('hidden');
+}
+
+function saveEditPlayer() {
+  const t = getTournament(); if (!t) return;
+  const p = t.teams.find(x => x.id === editPlayerId); if (!p) return;
+  p.name = document.getElementById('edit-player-name').value.trim() || p.name;
+  p.college = document.getElementById('edit-player-college').value.trim();
+  p.seed = parseInt(document.getElementById('edit-player-seed').value) || null;
+  save(); closeEditPlayer(); renderSinglesList();
+}
+
+function closeEditPlayer() { document.getElementById('edit-player-modal').classList.add('hidden'); editPlayerId = null; }
+
+// ─── GROUPS ───────────────────────────────────────────────────────────────────
 function refreshGroupTeamSelect() {
   const sel = document.getElementById('group-team-select');
-  sel.innerHTML = state.teams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+  sel.innerHTML = getTeams().map(t => `<option value="${t.id}">${participantName(t.id)}</option>`).join('');
 }
 
 function createGroup() {
+  const t = getTournament(); if (!t) return;
   const name = document.getElementById('group-name').value.trim();
   if (!name) { alert('Enter group name.'); return; }
   const qualify = parseInt(document.getElementById('group-qualify').value) || 2;
-  const opts = [...document.getElementById('group-team-select').selectedOptions].map(o => parseInt(o.value));
-  if (opts.length < 2) { alert('Select at least 2 teams.'); return; }
-  state.groups.push({ id: uid(), name, qualify, teamIds: opts });
+  const ids = [...document.getElementById('group-team-select').selectedOptions].map(o => parseInt(o.value));
+  if (ids.length < 2) { alert('Select at least 2 participants.'); return; }
+  t.groups.push({ id: uid(), name, qualify, teamIds: ids });
   save(); renderGroups();
   document.getElementById('group-name').value = '';
 }
 
+function autoGenerateRoundRobin() {
+  const t = getTournament(); if (!t) return;
+  const ids = [...document.getElementById('group-team-select').selectedOptions].map(o => parseInt(o.value));
+  if (ids.length < 2) { alert('Select at least 2 participants.'); return; }
+  const groupName = document.getElementById('group-name').value.trim() || 'Round Robin';
+  const qualify = parseInt(document.getElementById('group-qualify').value) || 2;
+  const gId = uid();
+  t.groups.push({ id: gId, name: groupName, qualify, teamIds: ids });
+  for (let i = 0; i < ids.length; i++)
+    for (let j = i+1; j < ids.length; j++)
+      t.matches.push({ id: uid(), team1Id: ids[i], team2Id: ids[j], format: 5, groupId: gId,
+        date: '', time: '', tableNum: '1', sets: [], result: null, status: 'upcoming', walkover: false, lineup: null });
+  save(); renderGroups();
+  alert(`Created "${groupName}" with ${ids.length*(ids.length-1)/2} round robin matches!`);
+}
+
 function renderGroups() {
-  const el = document.getElementById('groups-list');
-  if (!state.groups.length) { el.innerHTML = '<div class="empty-state">No groups yet.</div>'; return; }
-  el.innerHTML = state.groups.map(g => {
-    const teams = g.teamIds.map(id => state.teams.find(t => t.id === id)).filter(Boolean);
-    const standings = teams.map(t => {
-      const ms = state.matches.filter(m => (m.team1Id===t.id||m.team2Id===t.id) && m.groupId===g.id && m.result);
-      let w=0,l=0,pts=0;
-      ms.forEach(m => { if(m.result===t.id){w++;pts+=3;} else if(m.result){l++;} });
-      return {...t, w, l, pts};
-    }).sort((a,b) => b.pts-a.pts);
-    return `
-    <div class="card">
+  const el = document.getElementById('groups-list'); if (!el) return;
+  const groups = getGroups();
+  if (!groups.length) { el.innerHTML = '<div class="empty-state">No groups yet.</div>'; return; }
+  el.innerHTML = groups.map(g => {
+    const teams = g.teamIds.map(id => getTeams().find(t => t.id === id)).filter(Boolean);
+    const standings = teams.map(team => {
+      const ms = getMatches().filter(m => (m.team1Id===team.id||m.team2Id===team.id) && m.groupId===g.id && m.result);
+      let w=0, l=0, pts=0;
+      ms.forEach(m => { if (m.result===team.id){w++;pts+=3;} else if(m.result){l++;} });
+      return { ...team, w, l, pts };
+    }).sort((a,b) => b.pts - a.pts);
+    return `<div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <h2>📊 ${g.name} <span class="badge badge-blue" style="margin-left:8px">Top ${g.qualify} qualify</span></h2>
         <button class="btn-red btn-sm" onclick="deleteGroup(${g.id})">Delete</button>
       </div>
       <table style="margin-top:12px">
-        <thead><tr><th>Team</th><th>W</th><th>L</th><th>Pts</th><th>Status</th></tr></thead>
-        <tbody>${standings.map((t,i) => `
-          <tr><td>${t.name}</td><td>${t.w}</td><td>${t.l}</td><td><strong>${t.pts}</strong></td>
-          <td>${i < g.qualify ? '<span class="badge badge-green">Qualifies</span>' : '<span class="badge badge-gray">Eliminated</span>'}</td></tr>`).join('')}
-        </tbody>
+        <thead><tr><th>Participant</th><th>W</th><th>L</th><th>Pts</th><th>Status</th></tr></thead>
+        <tbody>${standings.map((team,i) => `<tr>
+          <td>${participantName(team.id)}</td><td>${team.w}</td><td>${team.l}</td><td><strong>${team.pts}</strong></td>
+          <td>${i < g.qualify ? '<span class="badge badge-green">Qualifies</span>' : '<span class="badge badge-gray">Eliminated</span>'}</td>
+        </tr>`).join('')}</tbody>
       </table>
     </div>`;
   }).join('');
 }
 
 function deleteGroup(id) {
-  if (!confirm('Delete this group?')) return;
-  state.groups = state.groups.filter(g => g.id !== id);
+  const t = getTournament(); if (!t) return;
+  if (!confirm('Delete group?')) return;
+  t.groups = t.groups.filter(g => g.id !== id);
   save(); renderGroups();
 }
 
-// MATCHES
+// ─── MATCHES ─────────────────────────────────────────────────────────────────
 function refreshMatchDropdowns() {
-  const opts = state.teams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+  const opts = getTeams().map(t => `<option value="${t.id}">${participantName(t.id)}</option>`).join('');
   document.getElementById('match-team1').innerHTML = opts;
   document.getElementById('match-team2').innerHTML = opts;
   document.getElementById('match-group').innerHTML = '<option value="">— None —</option>' +
-    state.groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+    getGroups().map(g => `<option value="${g.id}">${g.name}</option>`).join('');
   renderMatchesList();
 }
 
 function scheduleMatch() {
+  const t = getTournament(); if (!t) return;
   const t1 = parseInt(document.getElementById('match-team1').value);
   const t2 = parseInt(document.getElementById('match-team2').value);
-  if (t1 === t2) { alert('Select two different teams.'); return; }
-  const format = parseInt(document.getElementById('match-format').value);
-  const groupIdVal = document.getElementById('match-group').value;
-  const groupId = groupIdVal ? parseInt(groupIdVal) : null;
-  const date = document.getElementById('match-date').value;
-  const time = document.getElementById('match-time').value;
+  if (t1 === t2) { alert('Select two different participants.'); return; }
+  const format   = parseInt(document.getElementById('match-format').value);
+  const gv       = document.getElementById('match-group').value;
+  const groupId  = gv ? parseInt(gv) : null;
+  const date     = document.getElementById('match-date').value;
+  const time     = document.getElementById('match-time').value;
   const tableNum = document.getElementById('match-table').value;
-  state.matches.push({ id: uid(), team1Id: t1, team2Id: t2, format, groupId, date, time, tableNum, sets: [], result: null, status: 'upcoming', walkover: false });
+  t.matches.push({ id: uid(), team1Id: t1, team2Id: t2, format, groupId, date, time, tableNum,
+    sets: [], result: null, status: 'upcoming', walkover: false, lineup: null });
   save(); renderMatchesList();
 }
 
 function renderMatchesList() {
-  const el = document.getElementById('matches-list');
-  if (!state.matches.length) { el.innerHTML = '<div class="empty-state">No matches scheduled yet.</div>'; return; }
-  el.innerHTML = state.matches.map(m => {
-    const t1 = state.teams.find(t => t.id === m.team1Id);
-    const t2 = state.teams.find(t => t.id === m.team2Id);
-    if (!t1 || !t2) return '';
-    const winner = m.result ? state.teams.find(t => t.id === m.result) : null;
-    const setsDisplay = m.sets.length ? m.sets.map(s => `${s[0]}-${s[1]}`).join(', ') : '—';
-    return `
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:12px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:8px;background:${m.result?'#f0fdf4':'white'}">
+  const el = document.getElementById('matches-list'); if (!el) return;
+  const matches = getMatches();
+  if (!matches.length) { el.innerHTML = '<div class="empty-state">No matches yet.</div>'; return; }
+  el.innerHTML = matches.map(m => {
+    const n1 = participantName(m.team1Id), n2 = participantName(m.team2Id);
+    const winnerName = m.result ? participantName(m.result) : null;
+    const setsDisplay = m.sets?.length ? m.sets.map(s => `${s[0]}-${s[1]}`).join(', ') : '';
+    const lineupDone = m.lineup && m.lineup.A && m.lineup.B && m.lineup.X && m.lineup.Y;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:12px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:8px;background:${m.result?'#f0fdf4':'white'}">
       <div>
-        <strong>${t1.name}</strong> <span style="color:#6b7280">vs</span> <strong>${t2.name}</strong>
+        <strong>${n1}</strong> <span style="color:#6b7280">vs</span> <strong>${n2}</strong>
         ${m.walkover ? '<span class="badge badge-orange" style="margin-left:6px">Walkover</span>' : ''}
-        ${winner ? `<span class="badge badge-green" style="margin-left:6px">🏆 ${winner.name}</span>` : ''}
+        ${winnerName ? `<span class="badge badge-green" style="margin-left:6px">🏆 ${winnerName}</span>` : ''}
+        ${isTeamMode()&&lineupDone ? '<span class="badge badge-purple" style="margin-left:6px">Lineup set</span>' : ''}
         <div style="font-size:12px;color:#9ca3af;margin-top:4px">
           ${m.date||''} ${m.time?'· '+m.time:''} ${m.tableNum?'· Table '+m.tableNum:''} · Best of ${m.format}
-          ${setsDisplay !== '—' ? '· Sets: '+setsDisplay : ''}
+          ${setsDisplay ? '· ' + setsDisplay : ''}
         </div>
       </div>
       <div class="flex">
+        ${isTeamMode() && !m.result ? `<button class="btn-orange btn-sm" onclick="openLineupModal(${m.id})">Lineup</button>` : ''}
         <button class="btn-green btn-sm" onclick="openScoreModal(${m.id})">${m.result ? 'Edit Score' : 'Enter Score'}</button>
         ${!m.result ? `<button class="btn-gray btn-sm" onclick="setWalkover(${m.id})">Walkover</button>` : ''}
         <button class="btn-red btn-sm" onclick="deleteMatch(${m.id})">Delete</button>
@@ -436,80 +749,218 @@ function renderMatchesList() {
 }
 
 function deleteMatch(id) {
-  if (!confirm('Delete this match?')) return;
-  state.matches = state.matches.filter(m => m.id !== id);
+  const t = getTournament(); if (!t) return;
+  if (!confirm('Delete match?')) return;
+  t.matches = t.matches.filter(m => m.id !== id);
   save(); renderMatchesList(); renderGroups();
 }
 
 function setWalkover(id) {
-  const m = state.matches.find(x => x.id === id);
-  const t1 = state.teams.find(t => t.id === m.team1Id);
-  const t2 = state.teams.find(t => t.id === m.team2Id);
-  const winner = prompt(`Walkover — who wins?\n1. ${t1.name}\n2. ${t2.name}\nEnter 1 or 2:`);
-  if (winner === '1') { m.result = m.team1Id; m.walkover = true; }
-  else if (winner === '2') { m.result = m.team2Id; m.walkover = true; }
+  const t = getTournament(); if (!t) return;
+  const m = t.matches.find(x => x.id === id); if (!m) return;
+  const n1 = participantName(m.team1Id), n2 = participantName(m.team2Id);
+  const w = prompt(`Walkover — who wins?\n1. ${n1}\n2. ${n2}\nEnter 1 or 2:`);
+  if (w === '1') { m.result = m.team1Id; m.walkover = true; }
+  else if (w === '2') { m.result = m.team2Id; m.walkover = true; }
   else return;
   save(); renderMatchesList(); renderGroups();
 }
 
-// SCORE MODAL
+// ─── LINEUP MODAL ─────────────────────────────────────────────────────────────
+let activeLineupMatchId = null;
+
+function openLineupModal(id) {
+  const t = getTournament(); if (!t) return;
+  const m = t.matches.find(x => x.id === id); if (!m) return;
+  activeLineupMatchId = id;
+  const team1 = t.teams.find(x => x.id === m.team1Id);
+  const team2 = t.teams.find(x => x.id === m.team2Id);
+  if (!team1||!team2) { alert('Teams not found.'); return; }
+  document.getElementById('lineup-modal-title').textContent = `Lineup: ${team1.name} vs ${team2.name}`;
+  const ex = m.lineup || {};
+  const opts1 = (team1.players||[]).map(p => `<option value="${p}">${p}</option>`).join('');
+  const opts2 = (team2.players||[]).map(p => `<option value="${p}">${p}</option>`).join('');
+  document.getElementById('lineup-modal-body').innerHTML = `
+    <p style="font-size:13px;color:#6b7280;margin-bottom:12px">Assign players A & B from each team.<br>Order: A vs X · B vs Y · Doubles (A+B vs X+Y) · A vs Y · B vs X. First to 3 sub-match wins.</p>
+    <div class="lineup-grid">
+      <div class="lineup-box">
+        <h4>🏫 ${team1.name}</h4>
+        <label class="form-label">Player A</label><select id="lineup-A">${opts1}</select>
+        <label class="form-label">Player B</label><select id="lineup-B">${opts1}</select>
+      </div>
+      <div class="lineup-box">
+        <h4>🏫 ${team2.name}</h4>
+        <label class="form-label">Player X</label><select id="lineup-X">${opts2}</select>
+        <label class="form-label">Player Y</label><select id="lineup-Y">${opts2}</select>
+      </div>
+    </div>
+    <label class="form-label">Toss Winner</label>
+    <select id="lineup-toss">
+      <option value="${team1.id}">${team1.name}</option>
+      <option value="${team2.id}">${team2.name}</option>
+    </select>`;
+  if (ex.A) { document.getElementById('lineup-A').value = ex.A; }
+  if (ex.B) { document.getElementById('lineup-B').value = ex.B; }
+  if (ex.X) { document.getElementById('lineup-X').value = ex.X; }
+  if (ex.Y) { document.getElementById('lineup-Y').value = ex.Y; }
+  if (ex.tossWinner) { document.getElementById('lineup-toss').value = ex.tossWinner; }
+  document.getElementById('lineup-modal').classList.remove('hidden');
+}
+
+// FIX 5: saveLineup saves activeLineupMatchId BEFORE closing, then opens score modal with that id
+function saveLineup() {
+  const t = getTournament(); if (!t) return;
+  const m = t.matches.find(x => x.id === activeLineupMatchId); if (!m) return;
+  const A = document.getElementById('lineup-A').value;
+  const B = document.getElementById('lineup-B').value;
+  const X = document.getElementById('lineup-X').value;
+  const Y = document.getElementById('lineup-Y').value;
+  if (A === B) { alert('Player A and B must be different.'); return; }
+  if (X === Y) { alert('Player X and Y must be different.'); return; }
+  m.lineup = { A, B, X, Y, tossWinner: document.getElementById('lineup-toss').value };
+  save();
+  const matchIdToOpen = activeLineupMatchId; // capture before closing
+  closeLineupModal();
+  renderMatchesList();
+  openScoreModal(matchIdToOpen); // use captured id
+}
+
+function closeLineupModal() {
+  document.getElementById('lineup-modal').classList.add('hidden');
+  activeLineupMatchId = null;
+}
+
+// ─── SCORE MODAL ─────────────────────────────────────────────────────────────
+let activeMatchId = null;
+
 function openScoreModal(id) {
+  const t = getTournament(); if (!t) return;
+  const m = t.matches.find(x => x.id === id); if (!m) return;
   activeMatchId = id;
-  const m = state.matches.find(x => x.id === id);
-  const t1 = state.teams.find(t => t.id === m.team1Id);
-  const t2 = state.teams.find(t => t.id === m.team2Id);
-  document.getElementById('modal-title').textContent = `${t1.name} vs ${t2.name} — Best of ${m.format}`;
-  let html = '';
-  for (let i = 0; i < m.format; i++) {
-    const s = m.sets[i] || ['',''];
-    html += `<div class="set-row">
-      <label>Set ${i+1}</label>
-      <input type="number" min="0" class="set-score" data-idx="${i*2}" value="${s[0]}" placeholder="${t1.name.slice(0,8)}" style="width:80px">
-      <span style="color:#9ca3af">–</span>
-      <input type="number" min="0" class="set-score" data-idx="${i*2+1}" value="${s[1]}" placeholder="${t2.name.slice(0,8)}" style="width:80px">
+  const n1 = participantName(m.team1Id), n2 = participantName(m.team2Id);
+  document.getElementById('modal-title').textContent = `${n1} vs ${n2}`;
+
+  if (isTeamMode() && m.lineup && m.lineup.A) {
+    // Sub-match scoring for team events
+    const { A, B, X, Y } = m.lineup;
+    const subMatches = [
+      { label: `${A} vs ${X}`, key: 'AX' },
+      { label: `${B} vs ${Y}`, key: 'BY' },
+      { label: `${A}+${B} vs ${X}+${Y} (Doubles)`, key: 'DBL' },
+      { label: `${A} vs ${Y}`, key: 'AY' },
+      { label: `${B} vs ${X}`, key: 'BX' },
+    ];
+    const subs = m.subScores || {};
+    let t1wins = 0, t2wins = 0;
+    subMatches.forEach(sm => { if(subs[sm.key]===1) t1wins++; if(subs[sm.key]===2) t2wins++; });
+    const matchDone = t1wins >= 3 || t2wins >= 3;
+    let html = `<p style="font-size:13px;color:#6b7280;margin-bottom:8px">Mark winner of each sub-match. First to 3 wins the match.</p>`;
+    subMatches.forEach(sm => {
+      const w = subs[sm.key];
+      const locked = matchDone && !w; // lock unplayed matches once winner decided
+      html += `<div class="sub-match-row">
+        <span style="flex:1">${sm.label}</span>
+        <div class="flex">
+          <button class="btn-sm ${w===1?'btn-green':'btn-gray'}" onclick="setSubWin('${sm.key}',1)" ${locked?'disabled':''}>
+            ${n1.split(' ')[0]} ✓
+          </button>
+          <button class="btn-sm ${w===2?'btn-green':'btn-gray'}" onclick="setSubWin('${sm.key}',2)" ${locked?'disabled':''}>
+            ${n2.split(' ')[0]} ✓
+          </button>
+          ${w ? `<button class="btn-sm btn-gray" onclick="clearSubWin('${sm.key}')">✕</button>` : ''}
+        </div>
+      </div>`;
+    });
+    html += `<div style="margin-top:12px;padding:10px;background:#f0fdf4;border-radius:8px;font-size:14px;display:flex;align-items:center;gap:12px">
+      <span><strong>${n1}:</strong> ${t1wins}</span>
+      <span style="color:#6b7280">—</span>
+      <span><strong>${n2}:</strong> ${t2wins}</span>
+      ${matchDone ? `<span class="badge badge-green" style="margin-left:8px">🏆 ${t1wins>=3?n1:n2} wins!</span>` : ''}
     </div>`;
+    document.getElementById('modal-body').innerHTML = html;
+  } else {
+    // Set-by-set scoring (singles or team without lineup)
+    let html = `<p style="font-size:13px;color:#6b7280;margin-bottom:8px">Enter scores for each set. Winner is determined automatically.</p>`;
+    for (let i = 0; i < m.format; i++) {
+      const s = m.sets?.[i] || ['',''];
+      html += `<div class="set-row">
+        <label>Set ${i+1}</label>
+        <input type="number" min="0" class="set-score" value="${s[0]}" placeholder="${n1.slice(0,8)}" style="width:80px">
+        <span style="color:#9ca3af">–</span>
+        <input type="number" min="0" class="set-score" value="${s[1]}" placeholder="${n2.slice(0,8)}" style="width:80px">
+      </div>`;
+    }
+    document.getElementById('modal-body').innerHTML = html;
   }
-  document.getElementById('modal-body').innerHTML = html;
   document.getElementById('score-modal').classList.remove('hidden');
 }
 
+function setSubWin(key, side) {
+  const t = getTournament(); if (!t) return;
+  const m = t.matches.find(x => x.id === activeMatchId); if (!m) return;
+  if (!m.subScores) m.subScores = {};
+  m.subScores[key] = side;
+  let t1=0, t2=0;
+  Object.values(m.subScores).forEach(v => { if(v===1)t1++; if(v===2)t2++; });
+  m.result = t1>=3 ? m.team1Id : t2>=3 ? m.team2Id : null;
+  save();
+  openScoreModal(activeMatchId); // re-render in place
+}
+
+function clearSubWin(key) {
+  const t = getTournament(); if (!t) return;
+  const m = t.matches.find(x => x.id === activeMatchId); if (!m) return;
+  if (m.subScores) delete m.subScores[key];
+  let t1=0, t2=0;
+  Object.values(m.subScores||{}).forEach(v => { if(v===1)t1++; if(v===2)t2++; });
+  m.result = t1>=3 ? m.team1Id : t2>=3 ? m.team2Id : null;
+  save();
+  openScoreModal(activeMatchId);
+}
+
 function saveScore() {
-  const m = state.matches.find(x => x.id === activeMatchId);
+  const t = getTournament(); if (!t) return;
+  const m = t.matches.find(x => x.id === activeMatchId); if (!m) return;
+  if (isTeamMode() && m.lineup && m.lineup.A) {
+    // sub-match scoring — already saved in real time, just close
+    closeModal(); renderMatchesList(); renderGroups(); return;
+  }
   const inputs = [...document.querySelectorAll('.set-score')];
   const sets = [];
   for (let i = 0; i < m.format; i++) {
-    const a = inputs[i*2]?.value;
-    const b = inputs[i*2+1]?.value;
+    const a = inputs[i*2]?.value, b = inputs[i*2+1]?.value;
     if (a !== '' && b !== '') sets.push([parseInt(a), parseInt(b)]);
   }
   m.sets = sets;
   let w1=0, w2=0;
   sets.forEach(s => { if(s[0]>s[1]) w1++; else if(s[1]>s[0]) w2++; });
-  const need = Math.ceil(m.format/2);
-  if (w1 >= need) m.result = m.team1Id;
-  else if (w2 >= need) m.result = m.team2Id;
-  else m.result = null;
+  const need = Math.ceil(m.format / 2);
+  m.result = w1>=need ? m.team1Id : w2>=need ? m.team2Id : null;
   save(); closeModal(); renderMatchesList(); renderGroups(); renderKnockout();
 }
 
-function closeModal() {
-  document.getElementById('score-modal').classList.add('hidden');
-  activeMatchId = null;
+function closeModal() { document.getElementById('score-modal').classList.add('hidden'); activeMatchId = null; }
+
+// ─── KNOCKOUT ─────────────────────────────────────────────────────────────────
+function toggleKnockoutLock() {
+  const t = getTournament(); if (!t) return;
+  t.settings.lockKnockout = !t.settings.lockKnockout;
+  save(); renderKnockout();
 }
 
-// KNOCKOUT
 function generateKnockout() {
+  const t = getTournament(); if (!t) return;
   const qualifiers = [];
-  state.groups.forEach(g => {
-    const teams = g.teamIds.map(id => state.teams.find(t => t.id === id)).filter(Boolean);
-    const standings = teams.map(t => {
-      const ms = state.matches.filter(m => (m.team1Id===t.id||m.team2Id===t.id) && m.groupId===g.id && m.result);
-      let pts = 0; ms.forEach(m => { if(m.result===t.id) pts+=3; });
-      return {...t, pts};
+  getGroups().forEach(g => {
+    const teams = g.teamIds.map(id => getTeams().find(x => x.id===id)).filter(Boolean);
+    const standings = teams.map(team => {
+      const ms = getMatches().filter(m => (m.team1Id===team.id||m.team2Id===team.id) && m.groupId===g.id && m.result);
+      let pts = 0; ms.forEach(m => { if(m.result===team.id) pts+=3; });
+      return { ...team, pts };
     }).sort((a,b) => b.pts-a.pts).slice(0, g.qualify);
     qualifiers.push(...standings);
   });
-  if (qualifiers.length < 2) { alert('Not enough qualifiers. Complete group matches first.'); return; }
+  if (qualifiers.length < 2) { alert('Not enough qualifiers. Complete group stage first.'); return; }
   buildBracket(qualifiers);
 }
 
@@ -520,143 +971,199 @@ function showManualKnockout() {
 
 function buildKoInputs(slots) {
   const c = document.getElementById('ko-player-inputs');
-  c.innerHTML = '<label class="form-label" style="margin-top:12px">Assign players/teams to slots (leave blank for BYE)</label>';
-  for(let i=0;i<slots;i++){
-    c.innerHTML += `<input placeholder="Slot ${i+1} — player/team name (or leave blank for BYE)" class="ko-slot-input"/>`;
+  const participants = getTeams();
+  c.innerHTML = '<label class="form-label" style="margin-top:12px">Assign participants to slots (leave blank for BYE)</label>';
+  for (let i = 0; i < slots; i++) {
+    if (participants.length) {
+      c.innerHTML += `<select class="ko-slot-input" style="margin-bottom:6px">
+        <option value="">— BYE —</option>
+        ${participants.map(p => `<option value="${p.id}">${participantName(p.id)}</option>`).join('')}
+      </select>`;
+    } else {
+      c.innerHTML += `<input placeholder="Slot ${i+1} — name (blank = BYE)" class="ko-slot-input" style="margin-bottom:6px"/>`;
+    }
   }
 }
 
 function buildManualBracket() {
-  const inputs = [...document.querySelectorAll('.ko-slot-input')].map(i => i.value.trim() || 'BYE');
-  const players = inputs.map((name,i) => ({ id: -(i+1), name, isBye: name === 'BYE' }));
+  const inputs = [...document.querySelectorAll('.ko-slot-input')];
+  const players = inputs.map((el, i) => {
+    const val = el.tagName === 'SELECT' ? el.value : el.value.trim();
+    if (!val) return { id: -(i+1), name: 'BYE', isBye: true };
+    if (el.tagName === 'SELECT') {
+      const p = getTeams().find(x => x.id === parseInt(val));
+      return p ? { id: p.id, name: participantName(p.id), isBye: false } : { id: -(i+1), name: 'BYE', isBye: true };
+    }
+    return { id: -(i+1), name: val, isBye: false };
+  });
   buildBracket(players);
   document.getElementById('knockout-manual').classList.add('hidden');
 }
 
 function buildBracket(players) {
-  let size = 1; while(size < players.length) size *= 2;
-  while(players.length < size) players.push({ id: -(players.length+1), name:'BYE', isBye:true });
+  const t = getTournament(); if (!t) return;
+  let size = 1; while (size < players.length) size *= 2;
+  while (players.length < size) players.push({ id: -(players.length+1), name: 'BYE', isBye: true });
   const firstRound = [];
-  for(let i=0;i<players.length;i+=2){
-    firstRound.push({ id:uid(), p1:players[i], p2:players[i+1], result:null });
+  for (let i = 0; i < players.length; i += 2)
+    firstRound.push({ id: uid(), p1: players[i], p2: players[i+1], result: null, byeAdvanced: false });
+  t.knockout = [firstRound];
+  save();
+  // FIX 6: advance BYEs once here at build time, not on every render
+  advanceByes();
+  renderKnockout();
+}
+
+// FIX 6: BYE auto-advance runs ONCE after bracket is built, not on every render
+function advanceByes() {
+  const t = getTournament(); if (!t||!t.knockout?.length) return;
+  let changed = true;
+  while (changed) {
+    changed = false;
+    t.knockout[0].forEach(m => {
+      if (!m.result) {
+        if (m.p1.isBye) { koWin(m.id, 2, true); changed = true; }
+        else if (m.p2.isBye) { koWin(m.id, 1, true); changed = true; }
+      }
+    });
   }
-  state.knockout = [firstRound];
-  save(); renderKnockout();
 }
 
 function renderKnockout() {
-  const el = document.getElementById('knockout-bracket');
-  if (!state.knockout || !state.knockout.length) {
+  const el = document.getElementById('knockout-bracket'); if (!el) return;
+  const t = getTournament(); if (!t) return;
+  const locked = t.settings?.lockKnockout || false;
+  document.getElementById('lock-btn').textContent = locked ? '🔓 Unlock Bracket' : '🔒 Lock Bracket';
+  document.getElementById('lock-banner').classList.toggle('hidden', !locked);
+
+  if (!t.knockout || !t.knockout.length) {
     el.innerHTML = '<div class="empty-state" style="margin-top:16px">No bracket yet. Generate from group winners or set up manually.</div>';
     return;
   }
-  const roundNames = ['Round of '+(state.knockout[0].length*2), 'Quarterfinals','Semifinals','Final','Champion'];
-  el.innerHTML = `<div class="bracket-container">${state.knockout.map((round,ri) => `
-    <div style="min-width:200px">
-      <div class="round-label">${roundNames[ri] || 'Round '+(ri+1)}</div>
+  const roundNames = { 2:'Final', 4:'Semifinals', 8:'Quarterfinals', 16:'Round of 16', 32:'Round of 32' };
+  el.innerHTML = `<div class="bracket-container">${t.knockout.map((round, ri) => {
+    const label = roundNames[round.length*2] || `Round ${ri+1}`;
+    return `<div style="min-width:220px">
+      <div class="round-label">${label}</div>
       <div class="bracket-round">${round.map(m => {
-        const w = m.result ? (m.result===1?m.p1.name:m.p2.name) : null;
+        const w = m.result ? (m.result===1 ? m.p1.name : m.p2.name) : null;
         return `<div class="bracket-match">
           <div class="bracket-player${w===m.p1.name?' winner-bg':''}">
-            <span style="${m.p1.isBye?'opacity:0.4':''}">${m.p1.name}</span>
-            ${w===m.p1.name?'<span class="badge badge-green">✓</span>':''}
-            ${!m.result&&!m.p1.isBye&&!m.p2.isBye?`<button class="btn-green btn-sm" onclick="koWin(${m.id},1)">Win</button>`:''}
+            <span style="${m.p1.isBye?'opacity:0.35;font-style:italic':''}">${m.p1.name}</span>
+            ${w===m.p1.name ? '<span class="badge badge-green">✓</span>' : ''}
+            ${!locked&&!m.result&&!m.p1.isBye&&!m.p2.isBye ? `<button class="btn-green btn-sm" onclick="koWin(${m.id},1)">Win</button>` : ''}
           </div>
           <div class="bracket-player${w===m.p2.name?' winner-bg':''}">
-            <span style="${m.p2.isBye?'opacity:0.4':''}">${m.p2.name}</span>
-            ${w===m.p2.name?'<span class="badge badge-green">✓</span>':''}
-            ${!m.result&&!m.p1.isBye&&!m.p2.isBye?`<button class="btn-green btn-sm" onclick="koWin(${m.id},2)">Win</button>`:''}
+            <span style="${m.p2.isBye?'opacity:0.35;font-style:italic':''}">${m.p2.name}</span>
+            ${w===m.p2.name ? '<span class="badge badge-green">✓</span>' : ''}
+            ${!locked&&!m.result&&!m.p1.isBye&&!m.p2.isBye ? `<button class="btn-green btn-sm" onclick="koWin(${m.id},2)">Win</button>` : ''}
           </div>
+          ${!locked&&m.result ? `<div style="padding:4px 8px;text-align:right"><button class="btn-gray btn-sm" onclick="koReset(${m.id})">Reset</button></div>` : ''}
         </div>`;
       }).join('')}</div>
-    </div>`).join('')}</div>`;
-  state.knockout[0].forEach(m => {
-    if(m.p1.isBye&&!m.result) koWin(m.id,2,true);
-    if(m.p2.isBye&&!m.result) koWin(m.id,1,true);
-  });
+    </div>`;
+  }).join('')}</div>`;
 }
 
 function koWin(matchId, side, silent) {
-  for(let ri=0;ri<state.knockout.length;ri++){
-    const m = state.knockout[ri].find(x=>x.id===matchId);
-    if(!m) continue;
+  const t = getTournament(); if (!t) return;
+  for (let ri = 0; ri < t.knockout.length; ri++) {
+    const m = t.knockout[ri].find(x => x.id === matchId); if (!m) continue;
     m.result = side;
-    const winner = side===1?m.p1:m.p2;
-    const matchIdx = state.knockout[ri].indexOf(m);
-    if(!state.knockout[ri+1]) state.knockout[ri+1]=[];
-    const nextIdx = Math.floor(matchIdx/2);
-    if(!state.knockout[ri+1][nextIdx]) state.knockout[ri+1][nextIdx]={id:uid(),p1:{id:-99,name:'TBD',isBye:false},p2:{id:-99,name:'TBD',isBye:false},result:null};
-    if(matchIdx%2===0) state.knockout[ri+1][nextIdx].p1=winner;
-    else state.knockout[ri+1][nextIdx].p2=winner;
+    const winner = side === 1 ? m.p1 : m.p2;
+    const idx = t.knockout[ri].indexOf(m);
+    if (!t.knockout[ri+1]) t.knockout[ri+1] = [];
+    const nIdx = Math.floor(idx / 2);
+    if (!t.knockout[ri+1][nIdx])
+      t.knockout[ri+1][nIdx] = { id: uid(), p1:{id:-99,name:'TBD',isBye:false}, p2:{id:-99,name:'TBD',isBye:false}, result:null };
+    if (idx % 2 === 0) t.knockout[ri+1][nIdx].p1 = winner;
+    else               t.knockout[ri+1][nIdx].p2 = winner;
     break;
   }
-  save(); if(!silent) renderKnockout();
+  save(); if (!silent) renderKnockout();
 }
 
-// SCHEDULE
+function koReset(matchId) {
+  const t = getTournament(); if (!t) return;
+  if (!confirm('Reset this match result?')) return;
+  for (let ri = 0; ri < t.knockout.length; ri++) {
+    const m = t.knockout[ri].find(x => x.id === matchId); if (!m) continue;
+    m.result = null;
+    if (t.knockout[ri+1]) {
+      const idx = t.knockout[ri].indexOf(m);
+      const nIdx = Math.floor(idx / 2);
+      if (t.knockout[ri+1][nIdx]) {
+        if (idx%2===0) t.knockout[ri+1][nIdx].p1 = { id:-99, name:'TBD', isBye:false };
+        else           t.knockout[ri+1][nIdx].p2 = { id:-99, name:'TBD', isBye:false };
+        t.knockout[ri+1][nIdx].result = null;
+      }
+    }
+    break;
+  }
+  save(); renderKnockout();
+}
+
+// ─── SCHEDULE ─────────────────────────────────────────────────────────────────
 function renderSchedule() {
-  const el = document.getElementById('schedule-list');
-  if (!state.matches.length) { el.innerHTML = '<div class="empty-state">No matches yet.</div>'; return; }
+  const el = document.getElementById('schedule-list'); if (!el) return;
+  const matches = getMatches();
+  if (!matches.length) { el.innerHTML = '<div class="empty-state">No matches yet.</div>'; return; }
   const now = new Date();
-  const sorted = [...state.matches].sort((a,b) => (a.date+' '+a.time).localeCompare(b.date+' '+b.time));
+  const sorted = [...matches].sort((a,b) => (a.date+' '+a.time).localeCompare(b.date+' '+b.time));
   const timeMap = {};
   sorted.forEach(m => {
-    const key = m.date+'_'+m.time+'_T'+m.tableNum;
-    if(!timeMap[key]) timeMap[key]=[];
-    timeMap[key].push(m.id);
+    const k = `${m.date}_${m.time}_T${m.tableNum}`;
+    if (!timeMap[k]) timeMap[k] = [];
+    timeMap[k].push(m.id);
   });
   el.innerHTML = sorted.map(m => {
-    const t1 = state.teams.find(t=>t.id===m.team1Id);
-    const t2 = state.teams.find(t=>t.id===m.team2Id);
-    if(!t1||!t2) return '';
-    let statusClass='', statusLabel='Upcoming';
-    if(m.status==='postponed'){statusClass='postponed';statusLabel='Postponed';}
-    else if(m.result){statusLabel='Completed';}
-    else if(m.date&&m.time){
-      const mt=new Date(m.date+'T'+convertTo24(m.time));
-      if(!isNaN(mt)&&mt<now){statusClass='pending';statusLabel='Pending';}
+    const n1 = participantName(m.team1Id), n2 = participantName(m.team2Id);
+    let cls = '', label = 'Upcoming';
+    if (m.status === 'postponed') { cls = 'postponed'; label = 'Postponed'; }
+    else if (m.result) { label = 'Completed'; }
+    else if (m.date && m.time) {
+      const mt = new Date(m.date + 'T' + convertTo24(m.time));
+      if (!isNaN(mt) && mt < now) { cls = 'pending'; label = 'Pending'; }
     }
-    const key=m.date+'_'+m.time+'_T'+m.tableNum;
-    const conflict=timeMap[key]?.length>1;
-    return `
-    ${conflict?`<div class="conflict-warning">⚠️ Conflict: Table ${m.tableNum} double-booked at this time!</div>`:''}
-    <div class="schedule-card ${statusClass}">
+    const conflict = timeMap[`${m.date}_${m.time}_T${m.tableNum}`]?.length > 1;
+    return `${conflict ? `<div class="conflict-warning">⚠️ Table ${m.tableNum} double-booked at this time!</div>` : ''}
+    <div class="schedule-card ${cls}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
         <div>
-          <strong>${t1.name}</strong> <span style="color:#6b7280">vs</span> <strong>${t2.name}</strong>
-          <span class="badge ${statusClass==='pending'?'badge-orange':statusClass==='postponed'?'badge-gray':'badge-green'}" style="margin-left:8px">${statusLabel}</span>
+          <strong>${n1}</strong> <span style="color:#6b7280">vs</span> <strong>${n2}</strong>
+          <span class="badge ${cls==='pending'?'badge-orange':cls==='postponed'?'badge-gray':'badge-green'}" style="margin-left:8px">${label}</span>
         </div>
         <div class="flex">
           <button class="btn-blue btn-sm" onclick="openScoreModal(${m.id})">Score</button>
-          ${!m.result?`<button class="btn-gray btn-sm" onclick="togglePostpone(${m.id})">${m.status==='postponed'?'Restore':'Postpone'}</button>`:''}
+          ${!m.result ? `<button class="btn-gray btn-sm" onclick="togglePostpone(${m.id})">${m.status==='postponed'?'Restore':'Postpone'}</button>` : ''}
         </div>
       </div>
       <div style="font-size:12px;color:#9ca3af;margin-top:6px">
         ${m.date||'No date'} · ${m.time||'No time'} · Table ${m.tableNum} · Best of ${m.format}
-        ${m.result?'· 🏆 '+state.teams.find(t=>t.id===m.result)?.name:''}
+        ${m.result ? '· 🏆 ' + participantName(m.result) : ''}
       </div>
     </div>`;
   }).join('');
 }
 
 function togglePostpone(id) {
-  const m = state.matches.find(x=>x.id===id);
-  m.status = m.status==='postponed'?'upcoming':'postponed';
+  const t = getTournament(); if (!t) return;
+  const m = t.matches.find(x => x.id === id); if (!m) return;
+  m.status = m.status === 'postponed' ? 'upcoming' : 'postponed';
   save(); renderSchedule();
 }
 
 function convertTo24(str) {
-  if(!str) return '00:00';
-  const m = str.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-  if(!m) return '00:00';
-  let h=parseInt(m[1]),min=m[2],ap=(m[3]||'').toUpperCase();
-  if(ap==='PM'&&h!==12) h+=12;
-  if(ap==='AM'&&h===12) h=0;
-  return h.toString().padStart(2,'0')+':'+min;
+  if (!str) return '00:00';
+  const m = str.match(/(\d+):(\d+)\s*(AM|PM)?/i); if (!m) return '00:00';
+  let h = parseInt(m[1]), min = m[2], ap = (m[3]||'').toUpperCase();
+  if (ap==='PM' && h!==12) h += 12;
+  if (ap==='AM' && h===12) h = 0;
+  return h.toString().padStart(2,'0') + ':' + min;
 }
 
-// INIT — only render teams on load, no modals
-renderTeams();
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderTournamentList();
 </script>
 </body>
 </html>
